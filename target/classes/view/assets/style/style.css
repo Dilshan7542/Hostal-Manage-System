@@ -1,0 +1,21 @@
+
+.fontDefault{
+  -fx-font-size: 16px;
+  -fx-font-weight: bold;
+
+}
+.img-back{
+  -fx-background-image: url("../img/bg-2.jpg");
+  -fx-background-size: cover;
+  -fx-background-position: center;
+}
+
+.btnSave{
+  -fx-font-size:14px;
+  -fx-background-color: #2828fa;
+}
+.dateDefault{
+  -fx-font-size:14px;
+  -fx-background-color: #524949;
+
+}
