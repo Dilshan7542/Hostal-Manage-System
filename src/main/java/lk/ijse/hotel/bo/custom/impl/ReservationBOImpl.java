@@ -16,7 +16,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-
 import java.util.List;
 
 public class ReservationBOImpl implements ReservationBO {
@@ -33,9 +32,13 @@ public class ReservationBOImpl implements ReservationBO {
         if(save!=null){
              Room search = roomDAO.search(session, reservationDTO.getRoom().getRoomID());
             search.setQty(search.getQty()-1);
-        }
-        closeSession();
+            closeSession();
             return  modelMapper.map(save,ReservationDTO.class);
+        }else{
+            transaction.rollback();
+            session.close();
+        }
+        return null;
     }
 
     @Override
@@ -43,25 +46,36 @@ public class ReservationBOImpl implements ReservationBO {
         openSession();
         Reservation reservation = reservationDAO.search(session, reservationDTO.getResID()); // get old reservation
         session.detach(reservation);
+
          Room room = roomDAO.search(session, reservation.getRoom().getRoomID());// get old room number
          Reservation update = reservationDAO.update(session, modelMapper.map(reservationDTO, Reservation.class));
-        if(!update.getRoom().getRoomID().equals(room.getRoomID())){ // checked if equals old one and new one
-             Room room2 = roomDAO.search(session, update.getRoom().getRoomID());
-             room.setQty(room.getQty()+1);
-            room2.setQty(room.getQty()-1);
-        }
-        closeSession();
-        return  modelMapper.map(update,ReservationDTO.class);
+         if(update==null){
+             transaction.rollback();
+             session.close();
+             return null;
+         }else {
+             if (!update.getRoom().getRoomID().equals(room.getRoomID())) { // checked if equals old one and new one
+                 Room room2 = roomDAO.search(session, update.getRoom().getRoomID());
+                 room.setQty(room.getQty() + 1);
+                 room2.setQty(room.getQty() - 1);
+             }
+             closeSession();
+             return modelMapper.map(update, ReservationDTO.class);
+         }
     }
 
     @Override
     public boolean deleteReservation(ReservationDTO reservationDTO) {
         openSession();
-        final boolean delete = reservationDAO.delete(session, reservationDTO.getResID());
          Room search = roomDAO.search(session, reservationDTO.getRoom().getRoomID());
+         if(!reservationDAO.delete(session, reservationDTO.getResID())){
+             transaction.rollback();
+             session.close();
+             return false;
+         }
         search.setQty(search.getQty()+1);
         closeSession();
-        return delete;
+        return true;
     }
 
     @Override
