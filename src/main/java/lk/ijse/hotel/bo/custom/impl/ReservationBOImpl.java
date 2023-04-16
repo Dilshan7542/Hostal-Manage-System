@@ -26,7 +26,7 @@ public class ReservationBOImpl implements ReservationBO {
     RoomDAO roomDAO= (RoomDAOImpl) DAOFactory.getInstance().getDAO(DAOType.ROOM);
 
     @Override
-    public ReservationDTO saveReservation(ReservationDTO reservationDTO) {
+    public ReservationDTO saveReservation(ReservationDTO reservationDTO) throws Exception {
         openSession();
         final Reservation save = reservationDAO.save(session, modelMapper.map(reservationDTO, Reservation.class));
         if(save!=null){
@@ -42,7 +42,7 @@ public class ReservationBOImpl implements ReservationBO {
     }
 
     @Override
-    public ReservationDTO updateReservation(ReservationDTO reservationDTO) {
+    public ReservationDTO updateReservation(ReservationDTO reservationDTO)throws Exception {
         openSession();
         Reservation reservation = reservationDAO.search(session, reservationDTO.getResID()); // get old reservation
         session.detach(reservation);
@@ -65,7 +65,7 @@ public class ReservationBOImpl implements ReservationBO {
     }
 
     @Override
-    public boolean deleteReservation(ReservationDTO reservationDTO) {
+    public boolean deleteReservation(ReservationDTO reservationDTO) throws Exception{
         openSession();
          Room search = roomDAO.search(session, reservationDTO.getRoom().getRoomID());
          if(!reservationDAO.delete(session, reservationDTO.getResID())){

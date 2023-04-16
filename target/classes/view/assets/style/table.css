@@ -37,7 +37,7 @@
 }
 
 .table-row-cell:odd{
-    -fx-background-color: -fx-table-cell-border-color, rgba(0, 0, 0, 0.38);
+    -fx-background-color: -fx-table-cell-border-color, rgba(0, 0, 0, 0.68);
     -fx-padding: 0.0em; /* 0 */
 
 

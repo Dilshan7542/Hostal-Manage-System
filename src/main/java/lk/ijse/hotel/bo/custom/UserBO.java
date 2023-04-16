@@ -7,10 +7,10 @@ import org.hibernate.Session;
 import java.util.List;
 
 public interface UserBO extends SuperBO {
-    UserDTO saveUser(UserDTO userDTO);
-    UserDTO updateUser(UserDTO userDTO);
-    boolean deleteUser(String id);
-    List<UserDTO> getAllUser();
-    UserDTO searchUser(String id);
-    String generateIDUser();
+    UserDTO saveUser(UserDTO userDTO) throws Exception;
+    UserDTO updateUser(UserDTO userDTO) throws Exception;
+    boolean deleteUser(String id) throws Exception;
+    List<UserDTO> getAllUser() throws Exception;
+    UserDTO searchUser(String id) throws Exception;
+    String generateIDUser() throws Exception;
 }

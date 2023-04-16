@@ -8,5 +8,5 @@ import org.hibernate.Session;
 import java.util.List;
 
 public interface CustomBO extends SuperBO {
-    List<CustomDTO> getAllReservationDetails();
+    List<CustomDTO> getAllReservationDetails() throws Exception;
 }

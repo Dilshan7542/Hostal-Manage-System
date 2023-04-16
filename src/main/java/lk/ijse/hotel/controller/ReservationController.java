@@ -22,6 +22,7 @@ import lk.ijse.hotel.bo.custom.impl.CustomBOImpl;
 import lk.ijse.hotel.bo.custom.impl.ReservationBOImpl;
 import lk.ijse.hotel.bo.custom.impl.RoomBOImpl;
 import lk.ijse.hotel.bo.custom.impl.StudentBOImpl;
+import lk.ijse.hotel.dto.CustomDTO;
 import lk.ijse.hotel.dto.ReservationDTO;
 import lk.ijse.hotel.dto.RoomDTO;
 import lk.ijse.hotel.dto.StudentDTO;
@@ -74,6 +75,8 @@ ObservableList<ReservationTM> obResList= FXCollections.observableArrayList();
         if (cmbStudent.getItems().size()>=0) {
             cmbStudent.getItems().clear();
         }
+        try {
+
         final List<RoomDTO> allRoom = roomBO.getAllRoom();
         for (RoomDTO room : allRoom) {
         cmbRoom.getItems().addAll(room.getRoomID());
@@ -83,6 +86,9 @@ ObservableList<ReservationTM> obResList= FXCollections.observableArrayList();
          cmbStudent.getItems().addAll(st.getStudentID());
 
         }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -91,7 +97,11 @@ ObservableList<ReservationTM> obResList= FXCollections.observableArrayList();
             obResList.clear();
         }
 
-        lblResID.setText(reservationBO.generateIDReservation());
+        try {
+            lblResID.setText(reservationBO.generateIDReservation());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         colResID.setCellValueFactory(new PropertyValueFactory<>("resID"));
         colStudentID.setCellValueFactory(new PropertyValueFactory<>("studentID"));
         colName.setCellValueFactory(new PropertyValueFactory<>("studentName"));
@@ -101,27 +111,32 @@ ObservableList<ReservationTM> obResList= FXCollections.observableArrayList();
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
         colAction.setCellValueFactory(new PropertyValueFactory<>("btnBox"));
-        final List<ReservationDTO> allReservation = reservationBO.getAllReservation();
-        for (ReservationDTO r : allReservation) {
+         List<CustomDTO> details=null;
+        try {
+            details = customBO.getAllReservationDetails();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        for (CustomDTO r : details) {
             final ReservationTM reservationTM = new ReservationTM(
                     r.getResID(),
                     r.getDate(),
                     r.getStatus(),
-                    r.getStudent().getStudentID(),
-                    r.getStudent().getName(),
-                    r.getRoom().getRoomID(),
-                    r.getRoom().getType(),
-                    r.getRoom().getKey_money()
+                    r.getStudentID(),
+                    r.getStudentName(),
+                    r.getRoomID(),
+                    r.getRoomType(),
+                    r.getKey_money()
                     );
             reservationTM.setBtnBox( addActionBtn(reservationTM));
             for (int i = 0; i < cmbStudent.getItems().size(); i++) {
-                if (cmbStudent.getItems().get(i).equals(r.getStudent().getStudentID())) {
+                if (cmbStudent.getItems().get(i).equals(r.getStudentID())) {
                     cmbStudent.getItems().remove(i);
                 }
             }
             for (int i = 0; i < cmbRoom.getItems().size(); i++) {
-                if (cmbRoom.getItems().get(i).equals(r.getRoom().getRoomID())) {
-                    if (r.getRoom().getQty()<=0) {
+                if (cmbRoom.getItems().get(i).equals(r.getRoomID())) {
+                    if (r.getRoomQty()<=0) {
                         cmbRoom.getItems().remove(i);
                     }
                 }
@@ -137,11 +152,15 @@ ObservableList<ReservationTM> obResList= FXCollections.observableArrayList();
         Button btnDelete= MyAlerts.getDeleteBtn();
         btnDelete.setOnAction(event->{
             if(MyAlerts.getAlertConfirmation(404,"Are You Sure Delete This").get()==ButtonType.APPLY){
-                if(reservationBO.deleteReservation(reservationBO.searchReservation(r.getResID()))){
-                    obResList.remove(r);
-                    loadComboBox();
-                    loadTable();
+                try {
+                    if(reservationBO.deleteReservation(reservationBO.searchReservation(r.getResID()))){
+                        obResList.remove(r);
+                        loadComboBox();
+                        loadTable();
 
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
             }
@@ -150,6 +169,7 @@ ObservableList<ReservationTM> obResList= FXCollections.observableArrayList();
         btnEdit.setOnAction(event ->{
             if(MyAlerts.getAlertConfirmation(202,"Are You Sure Edit This").get()==ButtonType.APPLY){
                 lblResID.setText(r.getResID());
+                cmbStudent.getItems().add(r.getStudentID());
                 cmbStudent.setValue(r.getStudentID());
                 cmbRoom.setValue(r.getRoomID());
                 txtStatus.setText(r.getStatus());
@@ -170,6 +190,8 @@ ObservableList<ReservationTM> obResList= FXCollections.observableArrayList();
             final RoomDTO roomDTO = new RoomDTO();
             roomDTO.setRoomID(cmbRoom.getValue());
             ReservationDTO reservationDTO=new ReservationDTO(lblResID.getText(), Date.valueOf(dateRes.getValue()),txtStatus.getText(),studentDTO,roomDTO);
+           try {
+
             if(!isUpdate){
                 if(reservationBO.saveReservation(reservationDTO)!=null){
             new Alert(Alert.AlertType.INFORMATION,"Saved").show();
@@ -183,6 +205,9 @@ ObservableList<ReservationTM> obResList= FXCollections.observableArrayList();
             }
             clearTextField();
             loadTable();
+           }catch (Exception e){
+               e.printStackTrace();
+           }
         }
 
     }

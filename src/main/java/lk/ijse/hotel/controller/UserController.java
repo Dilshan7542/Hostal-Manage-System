@@ -39,10 +39,14 @@ public class UserController {
     UserBO userBO=(UserBOImpl) BOFactory.getInstance().getBO(BOType.USER);
     ModelMapper modelMapper=new ModelMapper();
     public void initialize(){
+        try {
             loadTable();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 boolean isUpdate;
-    private void loadTable() {
+    private void loadTable() throws Exception {
         if(obUserList.size()>0){
             obUserList.clear();
         }
@@ -66,9 +70,13 @@ boolean isUpdate;
         Button btnDelete= MyAlerts.getDeleteBtn();
         btnDelete.setOnAction(event ->{
             if(MyAlerts.getAlertConfirmation(404,"Are You Sure Delete This..?").get()==ButtonType.APPLY){
-                if(userBO.deleteUser(u.getUserID())){
-                    obUserList.remove(u);
-                    loadTable();
+                try {
+                    if(userBO.deleteUser(u.getUserID())){
+                        obUserList.remove(u);
+                        loadTable();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -91,6 +99,8 @@ boolean isUpdate;
     public void btnSaveAndUpdate(ActionEvent actionEvent) {
         if(isValid()){
             final UserDTO userDTO = new UserDTO(lblUserID.getText(), txtName.getText(), txtEmail.getText(), txtPwd.getText());
+           try {
+
             if(!isUpdate){
                 if (userBO.saveUser(userDTO)!=null) {
                     new Alert(Alert.AlertType.INFORMATION,"Saved").show();
@@ -105,6 +115,9 @@ boolean isUpdate;
                     isUpdate=false;
             clearTextField();
             loadTable();
+           }catch (Exception e){
+               e.printStackTrace();
+           }
         }
     }
 

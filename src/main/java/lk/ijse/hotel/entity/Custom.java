@@ -19,6 +19,11 @@ import java.sql.Date;
 public class Custom implements SuperEntity{
     String resID;
     Date date;
-    Student student;
-    Room room;
+    String status;
+    String studentID;
+    String studentName;
+    String roomID;
+    String roomType;
+    String key_money;
+    int roomQty;
 }

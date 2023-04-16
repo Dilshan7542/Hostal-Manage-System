@@ -30,7 +30,14 @@ public class LoginFormController {
     public CheckBox chBox;
     public TextField txtPwdField;
     UserBO userBO = (UserBOImpl) BOFactory.getInstance().getBO(BOType.USER);
-    final List<UserDTO> allUser = userBO.getAllUser();
+     List<UserDTO> allUser;
+    {
+        try {
+            allUser = userBO.getAllUser();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void btnLogin(ActionEvent actionEvent) throws IOException {
         checkLogin();

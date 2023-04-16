@@ -7,10 +7,10 @@ import org.hibernate.Session;
 import java.util.List;
 
 public interface RoomBO extends SuperBO {
-    RoomDTO saveRoom(RoomDTO roomDTO);
-    RoomDTO updateRoom(RoomDTO roomDTO);
-    boolean deleteRoom(String id)throws Exception;
-    List<RoomDTO> getAllRoom();
-    RoomDTO searchRoom(String id);
-    String generateIDRoom();
+    RoomDTO saveRoom(RoomDTO roomDTO)throws Exception;
+    RoomDTO updateRoom(RoomDTO roomDTO)throws Exception;
+    boolean deleteRoom(String id)throws  Exception;
+    List<RoomDTO> getAllRoom()throws Exception;
+    RoomDTO searchRoom(String id)throws Exception;
+    String generateIDRoom()throws Exception;
 }

@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
@@ -13,8 +14,11 @@ import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import lk.ijse.hotel.bo.BOFactory;
 import lk.ijse.hotel.bo.BOType;
+import lk.ijse.hotel.bo.custom.ReservationBO;
 import lk.ijse.hotel.bo.custom.RoomBO;
+import lk.ijse.hotel.bo.custom.impl.ReservationBOImpl;
 import lk.ijse.hotel.bo.custom.impl.RoomBOImpl;
+import lk.ijse.hotel.dto.ReservationDTO;
 import lk.ijse.hotel.dto.RoomDTO;
 import lk.ijse.hotel.tm.RoomTM;
 import lk.ijse.hotel.util.MyAlerts;
@@ -40,12 +44,19 @@ boolean isUpdate;
     ObservableList<RoomTM> obRoomList= FXCollections.observableArrayList();
 ModelMapper modelMap=new ModelMapper();
     RoomBO roomBO=(RoomBOImpl) BOFactory.getInstance().getBO(BOType.ROOM);
+    ReservationBO reservationBO=(ReservationBOImpl) BOFactory.getInstance().getBO(BOType.RESERVATION);
     public void initialize(){
-        loadTable();
+        try {
+            loadTable();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-public void loadTable(){
+public void loadTable() throws Exception {
+
         lblRoomID.setText(roomBO.generateIDRoom());
-        if(obRoomList.size()>=0){
+
+    if(obRoomList.size()>=0){
             obRoomList.clear();
         }
     colAction.setCellValueFactory(new PropertyValueFactory<>("btnBox"));
@@ -55,9 +66,19 @@ public void loadTable(){
     colID.setCellValueFactory(new PropertyValueFactory<>("roomID"));
 
     obRoomList.addAll( (List<RoomTM>)modelMap.map(roomBO.getAllRoom(), new TypeToken<List<RoomTM>>() {}.getType()));
-
+    final List<ReservationDTO> allReservation = reservationBO.getAllReservation();
     for (RoomTM roomTM : obRoomList) {
         roomTM.setBtnBox(getActionBox(roomTM));
+
+        for (ReservationDTO r : allReservation) {
+            if(roomTM.getRoomID().equals(r.getRoom().getRoomID())){
+                final Button button = (Button) roomTM.getBtnBox().getChildren().get(2);
+                button.setDisable(true);
+                button.setText("Blocked");
+                button.setStyle("-fx-background-color: #9504c0;-fx-font-size: 12px;-fx-text-fill: white");
+
+            }
+        }
     }
     mainTable.setItems(obRoomList);
     mainTable.refresh();
@@ -101,6 +122,9 @@ public void loadTable(){
     public void btnSave(ActionEvent actionEvent) {
         if(isValid()){
             final RoomDTO roomDTO1 = new RoomDTO(lblRoomID.getText(),txtRoomType.getText(),txtKeyMoney.getText(),Integer.parseInt(txtQty.getText()));
+          try {
+
+
             if(!isUpdate){
                 if(roomBO.saveRoom(roomDTO1)!=null){
                     new Alert(Alert.AlertType.INFORMATION,"saved").show();
@@ -114,10 +138,13 @@ public void loadTable(){
                    loadTable();
             isUpdate=false;
             clearTextFields();
+          }catch (Exception e){
+              e.printStackTrace();
+          }
         }
     }
 
-    private void clearTextFields() {
+    private void clearTextFields() throws Exception {
         lblRoomID.setText(roomBO.generateIDRoom());
         txtKeyMoney.setText("");
         txtQty.setText("");

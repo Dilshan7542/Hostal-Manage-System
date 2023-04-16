@@ -68,10 +68,14 @@ public class StudentController {
     private JFXRadioButton radioBtnFemale;
 
     public void initialize() {
-        loadTable();
+        try {
+            loadTable();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     ReservationBO reservationBO=(ReservationBOImpl) BOFactory.getInstance().getBO(BOType.RESERVATION);
-    private void loadTable() {
+    private void loadTable() throws Exception {
         lblStudentID.setText(studentBO.generateIDStudent());
         if (obStudentList.size()>=0) {
             obStudentList.clear();
@@ -85,15 +89,24 @@ public class StudentController {
         colAction.setCellValueFactory(new PropertyValueFactory<>("btnBox"));
         List<StudentTM> list = modelMapper.map(studentBO.getAllStudent(), new TypeToken<List<StudentTM>>() {
         }.getType());
-        final List<ReservationDTO> allReservation = reservationBO.getAllReservation();
+        final List<ReservationDTO> allReservation;
+        try {
+            allReservation = reservationBO.getAllReservation();
+
         obStudentList.addAll(list);
         for (StudentTM s : obStudentList) {
             s.setBtnBox(getActionBox(s));
         for (ReservationDTO r : allReservation) {
             if(s.getStudentID().equals(r.getStudent().getStudentID())){
-                s.getBtnBox().getChildren().get(2).setDisable(true);
+                final Button button = (Button) s.getBtnBox().getChildren().get(2);
+                button.setDisable(true);
+                button.setText("Blocked");
+                button.setStyle("-fx-background-color: #9504c0;-fx-font-size: 12px;-fx-text-fill: white");
             }
         }
+        }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         mainTable.setItems(obStudentList);
         mainTable.refresh();
@@ -148,6 +161,9 @@ public class StudentController {
                     Date.valueOf(dateDob.getValue()),
                     genderText
             );
+            try {
+
+
             if (!isUpdate) {
                 if (studentBO.saveStudent(studentDTO)!=null) {
                     new Alert(Alert.AlertType.INFORMATION,"Saved..").show();
@@ -162,7 +178,11 @@ public class StudentController {
             }
             clearTextFields();
             loadTable();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
+
         isUpdate=false;
     }
 
