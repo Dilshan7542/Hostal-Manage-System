@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -15,6 +16,7 @@ import java.sql.Date;
 @ToString
 @Entity
 @Cacheable
+@DynamicUpdate
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Reservation implements SuperEntity {
     @Id

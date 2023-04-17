@@ -25,6 +25,7 @@ lk\ijse\hotel\dao\DAOFactory.class
 lk\ijse\hotel\dao\DAOType.class
 lk\ijse\hotel\controller\LoginFormController$1.class
 lk\ijse\hotel\util\Regex$1.class
+lk\ijse\hotel\bo\custom\impl\CustomBOImpl$1.class
 lk\ijse\hotel\entity\Custom.class
 lk\ijse\hotel\bo\custom\impl\ReservationBOImpl$1.class
 lk\ijse\hotel\dao\custom\ReservationDAO.class
